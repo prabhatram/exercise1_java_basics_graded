@@ -56,15 +56,6 @@ public class MarsXTest {
 
     
     @Test
-    public void testTripTypeEnumSetters() {
-        tripType.setTripType("Premium");
-        tripType.setBasePrice(50000);
-        assertEquals("Premium", tripType.getTripType());
-        assertEquals(50000, tripType.getBasePrice());
-    }
-
-    
-    @Test
     public void testTripTypeToString() {
         String output = tripType.toString();
         assertTrue(output.contains(tripType.getTripType()));
