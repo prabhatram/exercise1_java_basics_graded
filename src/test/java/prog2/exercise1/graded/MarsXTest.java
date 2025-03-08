@@ -19,42 +19,45 @@ public class MarsXTest {
 
     @Before
     public void setUp() {
-        
+        // Randomly select a trip type
         MarsX.TripType[] tripTypes = MarsX.TripType.values();
         tripType = tripTypes[random.nextInt(tripTypes.length)];
 
-        
+        // Generate a random passenger name
         String[] names = {"John Doe", "Jane Smith", "Michael Brown", "Emily Davis"};
         String passengerName = names[random.nextInt(names.length)];
 
-        
-        int birthYear = random.nextInt(31) + 1980; 
+        // Generate a random birthdate (between 1980 and 2010)
+        int birthYear = random.nextInt(31) + 1980;  // Year between 1980-2010
         LocalDate dateOfBirth = LocalDate.of(birthYear, random.nextInt(12) + 1, random.nextInt(28) + 1);
 
-        
+        // Generate random departure and return dates (in 2025)
         LocalDate dateOfDeparture = LocalDate.of(2025, random.nextInt(12) + 1, random.nextInt(28) + 1);
-        LocalDate dateOfReturn = dateOfDeparture.plusDays(7 + random.nextInt(30));  
+        LocalDate dateOfReturn = dateOfDeparture.plusDays(8 + random.nextInt(30));  // Ensuring at least 7 days stay
 
+        // Generate random number of co-passengers and children
         int numberOfCoPassengers = random.nextInt(5);
         int numberOfChildren = numberOfCoPassengers > 0 ? random.nextInt(numberOfCoPassengers) : 0;
 
+        // Generate random insurance details
         int insuranceNumber = random.nextInt(100000);
         String[] insuranceCompanies = {"SpaceShield", "Galactic Cover", "OrbitCare"};
         String insuranceCompany = insuranceCompanies[random.nextInt(insuranceCompanies.length)];
         String insuranceContactNumber = "555-" + (1000 + random.nextInt(9000));
 
+        // Create a new MarsX object with randomized values
         marsX = new MarsX(tripType, passengerName, dateOfBirth, dateOfDeparture, dateOfReturn,
                 numberOfCoPassengers, numberOfChildren, 0, "None", insuranceNumber, insuranceCompany, insuranceContactNumber);
     }
 
-    
+    // ✅ Test TripType Constructor & Getters
     @Test
     public void testTripTypeEnumConstructorAndGetters() {
         assertNotNull(tripType.getTripType());
         assertTrue(tripType.getBasePrice() > 0);
     }
 
-    
+    // ✅ Test TripType toString()
     @Test
     public void testTripTypeToString() {
         String output = tripType.toString();
@@ -62,7 +65,7 @@ public class MarsXTest {
         assertTrue(output.contains("Ticket Price: " + tripType.getBasePrice()));
     }
 
-    
+    // ✅ Test MarsX Constructor
     @Test
     public void testMarsXConstructor() {
         assertNotNull(marsX.getPassengerName());
@@ -75,6 +78,7 @@ public class MarsXTest {
         assertNotNull(marsX.getInsuranceContactNumber());
     }
 
+    // ✅ Test MarsX Getters & Setters
     @Test
     public void testMarsXSettersAndGetters() {
         marsX.setPassengerName("Alex Johnson");
@@ -97,6 +101,7 @@ public class MarsXTest {
         assertEquals(expectedAge, actualAge);
     }
 
+    // ✅ Test Date is After Departure Using Reflection
     @Test
     public void testDateAfterDepartureUsingReflection() throws Exception {
         Method method = MarsX.class.getDeclaredMethod("dateAfterDeparture");
@@ -106,6 +111,7 @@ public class MarsXTest {
         assertTrue(result); // Return date should be after departure
     }
 
+    // ✅ Test Calculate Price After Tax Using Reflection
     @Test
     public void testCalculatePriceAfterTaxUsingReflection() throws Exception {
         Method method = MarsX.class.getDeclaredMethod("calculatePriceAfterTax", double.class);
@@ -131,16 +137,17 @@ public class MarsXTest {
         }
 
         // Now calculate the expected price after tax
-        double priceBeforeTax = (pricePerPassenger * (marsX.getTotalPassengers() - marsX.getNumberOfChildren())) + (pricePerPassenger * marsX.getNumberOfChildren() * (1 - MarsX.CHILD_DISCOUNT));
+        double priceBeforeTax = (pricePerPassenger * (marsX.getTotalPassengers() - marsX.getNumberOfChildren())) + (pricePerPassenger * marsX.getNumberOfChildren() * (1 - 0.2));
         double expectedPriceAfterTax = priceBeforeTax * 1.25;
         
         // Call the actual method
-        double actualPriceAfterTax = marsX.calculatePriceAfterTax(pricePerPassenger);
+        double actualPriceAfterTax = (double) method.invoke(marsX, pricePerPassenger);
         
         // Assert the values match
         assertEquals(expectedPriceAfterTax, actualPriceAfterTax, 0.01);
     }
 
+    // ✅ Test Calculate Total Ticket Price Using Reflection
     @Test
     public void testCalculateTotalTicketPriceUsingReflection() throws Exception {
         Method method = MarsX.class.getDeclaredMethod("calculateTotalTicketPrice");
