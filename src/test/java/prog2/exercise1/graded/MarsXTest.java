@@ -1,4 +1,4 @@
-package prog2.exercise1.graded;
+package com.example.exercise_1.javabasics.graded;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
